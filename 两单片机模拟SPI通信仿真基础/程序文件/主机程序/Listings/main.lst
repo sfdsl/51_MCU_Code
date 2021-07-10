@@ -1,0 +1,117 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              07/10/2021 13:56:48 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: F:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include <STDIO.h>
+   3          #include <intrins.h>
+   4          typedef unsigned char u8;
+   5          typedef unsigned int  u16;
+   6            
+   7          sbit CLK =P1^0;    //时钟信号
+   8          sbit MOSI=P1^1;    //主发从接
+   9          sbit MISO=P1^2;    //主接从发
+  10          sbit SS  =P1^3;    //片选（使能）信号
+  11          
+  12          void Delay_ms(unsigned int ms)    //@12.000MHz
+  13          {
+  14   1        unsigned char i, j;
+  15   1        for(;ms>1;ms--)
+  16   1        {
+  17   2            i = 2;
+  18   2          j = 239;
+  19   2          do
+  20   2          {
+  21   3            while (--j);
+  22   3          } while (--i);
+  23   2        }
+  24   1      }
+  25          
+  26          
+  27          void Master_Send_Dat(u8 dat) //发送数据程序
+  28          {
+  29   1        u8 i;
+  30   1        SS=0;//主机选择从机
+  31   1        for(i=0;i<8;i++)
+  32   1        {
+  33   2           if(dat&0x80)
+  34   2            MOSI=1;
+  35   2           else
+  36   2            MOSI=0;
+  37   2            dat=(dat<<1);
+  38   2           
+  39   2            CLK=1;
+  40   2            _nop_();
+  41   2            _nop_();
+  42   2            CLK=0;
+  43   2           _nop_();
+  44   2           _nop_();
+  45   2        }
+  46   1        SS=1;
+  47   1        Delay_ms(1);
+  48   1      }
+  49          
+  50          u8 Mater_Receive_Dat(void)
+  51          {
+  52   1        u8 i,dat=0;
+  53   1        SS=0;//主机选择从机
+  54   1        for(i=0;i<8;i++)
+C51 COMPILER V9.60.0.0   MAIN                                                              07/10/2021 13:56:48 PAGE 2   
+
+  55   1        {
+  56   2            dat=dat<<1;
+  57   2            dat=dat|MISO;
+  58   2            
+  59   2            CLK=1;
+  60   2            _nop_();
+  61   2            _nop_();
+  62   2            CLK=0;
+  63   2           _nop_();
+  64   2           _nop_();   
+  65   2        }
+  66   1        SS=1;
+  67   1        return dat;
+  68   1      }
+  69          
+  70          
+  71           u8 code num[10]={0x3f,0x06,0x5b,0x4f,0x66,
+  72                       0x6d,0x7d,0x07,0x7f,0x6f};
+  73           
+  74          void main(void)
+  75          {
+  76   1       u8 exdat=1,i=0;
+  77   1        CLK=0;
+  78   1        P2=0X00;
+  79   1        while(1)
+  80   1        {
+  81   2         for(i=0;i<10;i++)
+  82   2          {   
+  83   3              Master_Send_Dat(i);
+  84   3              Delay_ms(500);
+  85   3          
+  86   3              exdat=Mater_Receive_Dat();
+  87   3              P2=num[exdat];
+  88   3              Delay_ms(500);
+  89   3          }
+  90   2        }
+  91   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    165    ----
+   CONSTANT SIZE    =     10    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
