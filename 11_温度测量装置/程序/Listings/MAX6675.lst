@@ -1,0 +1,129 @@
+C51 COMPILER V9.60.0.0   MAX6675                                                           04/19/2021 13:15:52 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAX6675
+OBJECT MODULE PLACED IN .\Objects\MAX6675.obj
+COMPILER INVOKED BY: F:\Keil_v5\C51\BIN\C51.EXE MAX6675.C OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\M
+                    -AX6675.lst) TABS(2) OBJECT(.\Objects\MAX6675.obj)
+
+line level    source
+
+   1          #include "MAX6675.h"
+   2          
+   3          float MAX6675_Temper;
+   4          float MAX31855_Temper;
+   5          
+   6          
+   7          void MAX6675_Delay1us()   //@33.1776MHz
+   8          {
+   9   1        unsigned char i;
+  10   1      
+  11   1        i = 9;
+  12   1        while (--i);
+  13   1      }
+  14          
+  15          void MAX6675_Delay_us(u16 x)
+  16          {
+  17   1        u16 i;
+  18   1        for(i=0;i<x;i++)
+  19   1          MAX6675_Delay1us();
+  20   1      }
+  21          
+  22          
+  23          u16 MAX6675_ReadDat() 
+  24          {
+  25   1        u16 d;
+  26   1        u8 i; 
+  27   1      
+  28   1        MAX6675_CS=0;
+  29   1        MAX6675_CLK=0;
+  30   1        MAX6675_Delay_us(2);
+  31   1        for(i=0;i<16;i++)
+  32   1        {
+  33   2          d<<=1; 
+  34   2          MAX6675_Delay_us(2);
+  35   2          MAX6675_CLK=1;
+  36   2          if(MAX6675_DAT)
+  37   2           d++;
+  38   2           MAX6675_Delay_us(2);
+  39   2           MAX6675_CLK=0; 
+  40   2        }
+  41   1        MAX6675_CS=1;
+  42   1        return d;
+  43   1      }
+  44          
+  45          void MAX6675_ReadTemper() 
+  46          {
+  47   1        u16 d;
+  48   1        
+  49   1        d=MAX6675_ReadDat();//读取MAX6675当前的温度值
+  50   1        MAX6675_Temper=((d>>3)&0x0fff)*0.25; 
+  51   1      }
+  52          
+  53          
+  54          void Max6675_Init()
+C51 COMPILER V9.60.0.0   MAX6675                                                           04/19/2021 13:15:52 PAGE 2   
+
+  55          {
+  56   1      //  GPIO_Init(GPIO3,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7,GPIO_Mode_IPU);
+  57   1        MAX6675_CS=1;
+  58   1        MAX6675_CLK=1;
+  59   1        MAX6675_DAT=1;
+  60   1      
+  61   1      }
+  62          
+  63          /*********************************************************************************************************
+             -*********/
+  64          u32 MAX31855_ReadDat() 
+  65          {
+  66   1        u32 d;
+  67   1        u8 i;
+  68   1         
+  69   1        MAX6675_CS=0;
+  70   1        MAX6675_CLK=0;
+  71   1        MAX6675_Delay_us(12);
+  72   1        for(i=0;i<32;i++)
+  73   1        {
+  74   2          d<<=1; 
+  75   2          MAX6675_Delay_us(12);
+  76   2          MAX6675_CLK=1;
+  77   2          if(MAX6675_DAT)
+  78   2           d++;
+  79   2           MAX6675_Delay_us(12);
+  80   2           MAX6675_CLK=0; 
+  81   2        }
+  82   1        MAX6675_CS=1;
+  83   1        return d;
+  84   1      }
+  85          
+  86          void MAX31855_ReadTemper() 
+  87          {
+  88   1        u32 d;
+  89   1        
+  90   1        d=MAX31855_ReadDat();//读取MAX6675当前的温度值
+  91   1        MAX31855_Temper=((d>>18)&0x3fff)*0.25+0.5;  //+0.5四舍五入
+  92   1      }
+  93          
+  94          
+  95          
+  96          
+  97          
+  98          
+  99          
+ 100          
+ 101          
+ 102          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    284    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      8       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

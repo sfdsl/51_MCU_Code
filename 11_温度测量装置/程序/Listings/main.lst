@@ -1,0 +1,101 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              05/23/2021 17:36:05 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: F:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "config.h"
+   2          #include "lcd1602.h"
+   3          #include "DS18B20.h"
+   4          #include "delay.h"
+   5          #include "TLC2543.h"
+   6          #include "thermocouple.h"
+   7          
+   8          void display_TLC2543_temp(uchar Temp_Start )
+   9          {  
+  10   1          uchar i=0;
+  11   1          float m1=0.0;
+  12   1           uint ad_num=0;
+  13   1           uint tempH=0,tempL=0;
+  14   1        
+  15   1             while(1)
+  16   1            {
+  17   2              ad_num=read2543(0);
+  18   2              m1=(float)(1.221*ad_num-2494);//0.0012219961298302
+  19   2               i++;
+  20   2              tempH=(u16)(100*table[i+1]);
+  21   2              tempL=(u16)(100*table[i]);
+  22   2               if(m1>=tempL && m1<=tempH)
+  23   2                  break;
+  24   2            }
+  25   1            Disp_number(Temp_Start,1,(u16)i,5);
+  26   1            DisplayOneChar(Temp_Start+5,1,0XDF-0X30);
+  27   1            DisplayOneChar(Temp_Start+6,1,'C'-0X30);
+  28   1      }
+  29          
+  30          Temperature_value Real_temp;//定义一个温度结构体
+  31           
+  32          void display_temperature(uchar Temp_Start)
+  33          {
+  34   1          uchar  High_T,Low_T;
+  35   1          //Temperature_value Real_temp;
+  36   1          Real_temp=Read18B20_Temperature();
+  37   1        
+  38   1          if(Real_temp.tempflag==1)
+  39   1          {
+  40   2              DisplayOneChar(Temp_Start,1,'-');
+  41   2              High_T=Real_temp.tempr/10;
+  42   2              Low_T=Real_temp.tempr%10;
+  43   2              DisplayOneChar(Temp_Start+1,1,High_T);
+  44   2              DisplayOneChar(Temp_Start+2,1,Low_T);
+  45   2              DisplayOneChar(Temp_Start+3,1,'.');
+  46   2              DisplayOneChar(Temp_Start+4,1,Real_temp.fraction);
+  47   2          }else
+  48   1          {
+  49   2              High_T=Real_temp.tempr/10;
+  50   2              Low_T=Real_temp.tempr%10;
+  51   2              DisplayOneChar(Temp_Start,1,High_T);
+  52   2              DisplayOneChar(Temp_Start+1,1,Low_T);
+  53   2              DisplayChars(Temp_Start+2,1,".");
+  54   2              DisplayOneChar(Temp_Start+3,1,Real_temp.fraction);
+C51 COMPILER V9.60.0.0   MAIN                                                              05/23/2021 17:36:05 PAGE 2   
+
+  55   2          }   
+  56   1      }
+  57          
+  58          /*
+  59          温度控制器
+  60          一通电，LED显示温度为20摄氏度，然后通过按键
+  61          实行加减到指定的温度，然后继电器闭合开始加热，
+  62          当加热的温度没有达到指定温度，LED闪烁并发出报警
+  63          */
+  64          void main(void)
+  65           { 
+  66   1          unsigned char High_Temp=30,state=0;
+  67   1         // Write your code here
+  68   1         LCD_Init();//LCD1602的初始化
+  69   1         while (1)
+  70   1         {
+  71   2              DisplayChars(0,0,"ThermTemp:");
+  72   2              display_TLC2543_temp(0);//显示热电偶采集的温度
+  73   2         }
+  74   1      }
+  75           
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    420    ----
+   CONSTANT SIZE    =     13    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3      17
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

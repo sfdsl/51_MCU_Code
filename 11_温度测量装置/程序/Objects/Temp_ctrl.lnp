@@ -1,0 +1,9 @@
+".\Objects\STARTUP.obj",
+".\Objects\delay.obj",
+".\Objects\DS18B20.obj",
+".\Objects\lcd1602.obj",
+".\Objects\main.obj",
+".\Objects\TLC2543.obj",
+".\Objects\thermocouple.obj" 
+TO ".\Objects\Temp_ctrl" 
+PRINT(".\Listings\Temp_ctrl.m51")

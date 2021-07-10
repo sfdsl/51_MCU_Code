@@ -1,0 +1,76 @@
+C51 COMPILER V9.60.0.0   DELAY                                                             05/19/2021 23:08:33 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE DELAY
+OBJECT MODULE PLACED IN .\Objects\delay.obj
+COMPILER INVOKED BY: F:\Keil_v5\C51\BIN\C51.EXE delay.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\del
+                    -ay.lst) TABS(2) OBJECT(.\Objects\delay.obj)
+
+line level    source
+
+   1          #include "delay.h"
+   2          
+   3          
+   4          
+   5          /********************************************************
+   6          
+   7          函数功能： 延时c  ms
+   8          参    数：  c
+   9          返回  值： 无
+  10          *********************************************************/
+  11          void Delay1ms(uint c)   //@12.000MHz
+  12          {
+  13   1          unsigned char i, j;
+  14   1          for(;c>0;c--)
+  15   1        {
+  16   2              i = 2;
+  17   2            j = 239;
+  18   2            do
+  19   2            {
+  20   3              while (--j);
+  21   3            } while (--i);
+  22   2        }
+  23   1      }
+  24          
+  25          /********************************************************
+  26          
+  27          函数功能： 延时2*  us
+  28          参    数：  us
+  29          返回  值： 无
+  30          *********************************************************/
+  31          void Delay2us(uint us)    //@12.000MHz
+  32          {
+  33   1        while(us--);
+  34   1      }
+  35          
+  36          /********************************************************
+  37          
+  38          函数功能： 延时1*  us
+  39          参    数：  us
+  40          返回  值： 无
+  41          *********************************************************/
+  42          
+  43          void Delay1us(uint us)    //@12.000MHz
+  44          {
+  45   1          for(;us>0;us--)
+  46   1            {
+  47   2              _nop_();
+  48   2      
+  49   2            }
+  50   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     54    ----
+C51 COMPILER V9.60.0.0   DELAY                                                             05/19/2021 23:08:33 PAGE 2   
+
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

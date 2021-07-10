@@ -1,0 +1,61 @@
+C51 COMPILER V9.60.0.0   TLC2543                                                           05/19/2021 23:08:33 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE TLC2543
+OBJECT MODULE PLACED IN .\Objects\TLC2543.obj
+COMPILER INVOKED BY: F:\Keil_v5\C51\BIN\C51.EXE TLC2543.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\T
+                    -LC2543.lst) TABS(2) OBJECT(.\Objects\TLC2543.obj)
+
+line level    source
+
+   1          
+   2          #include "TLC2543.h"
+   3          #include "delay.h"
+   4          
+   5          
+   6          
+   7          
+   8          
+   9          /**************************************
+  10            名称：read2543
+  11            功能：TLC2543驱动模块
+  12            输入参数：port通道号
+  13            输出参数：ad转换值
+  14          *************************************/
+  15          uint read2543(uchar port)
+  16          {
+  17   1          uint ad=0,i;
+  18   1            CLOCK=0;
+  19   1            _CS=0;
+  20   1            port<<=4;
+  21   1          for(i=0;i<12;i++)
+  22   1          {
+  23   2              if(D_OUT) 
+  24   2                ad|=0x01;
+  25   2              D_IN=(bit)(port&0x80);
+  26   2              CLOCK=1;
+  27   2              Delay1us(3);
+  28   2              CLOCK=0;
+  29   2              Delay1us(3);
+  30   2              port<<=1;
+  31   2              ad<<=1;
+  32   2          }
+  33   1            _CS=1;
+  34   1            ad>>=1;
+  35   1          return(ad);
+  36   1      }
+  37          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    103    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       5
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
